@@ -8,6 +8,7 @@ import (
 )
 
 type UserService struct {
+	service.UnimplementedUserServiceServer //需要加这一句 否则提示接口未实现,视频旧版本的不需要
 }
 
 func NewUserService() *UserService {
@@ -29,7 +30,7 @@ func (*UserService) UserLogin(ctx context.Context, req *service.UserRequest) (re
 }
 
 // UserRegister 用户注册
-func (*UserService) UserRegister(ctx context.Context, req *service.User) (resp *service.UserDetailResponse, err error) {
+func (*UserService) UserRegister(ctx context.Context, req *service.UserRequest) (resp *service.UserDetailResponse, err error) {
 	var user repository.User
 	resp = new(service.UserDetailResponse)
 	resp.Code = e.Success
@@ -39,5 +40,10 @@ func (*UserService) UserRegister(ctx context.Context, req *service.User) (resp *
 		return resp, err
 	}
 	resp.UserDetail = repository.BuildUser(user)
+	return resp, nil
+}
+
+func (*UserService) UserLogout(ctx context.Context, req *service.UserRequest) (resp *service.UserDetailResponse, err error) {
+	resp = new(service.UserDetailResponse)
 	return resp, nil
 }
